@@ -1,28 +1,47 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="form-page">
+      <div class="description-header">
+        <h3 id="form-title" class="title is-3">{{ formTitle }}</h3>
+        <div class="content is-medium">
+          <p>{{ formDescription }}</p>
+        </div>
+      </div>
+      <Form/>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Form from './components/Form.vue'
+import TextContent from './content-config'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    Form
+  },
+  data: function() {
+    return {
+      formTitle : TextContent().formTitle,
+      formDescription : TextContent().formDescription
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.form-page {
+  width: 100%;
+  padding: 0px 25vw;
+}
+.description-header {
+  margin-top:16px;
+  min-height: 15vh;
+  margin-bottom: 16px;
+}
+
+#form-title {
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
