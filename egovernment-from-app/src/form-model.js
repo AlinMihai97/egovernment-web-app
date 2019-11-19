@@ -269,7 +269,7 @@ var formModel = {
                     <ul>\
                         <li>Abonament student: 50%</li>\
                         <li>Abonament angajat UPB: 25%</li>\
-                        <li>Personal administrativ: GRATIS/li>\
+                        <li>Personal administrativ: GRATIS</li>\
                     </ul>\
                     ",
                     hasError: false,

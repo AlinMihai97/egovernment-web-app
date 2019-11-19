@@ -69,7 +69,7 @@
               <h4 class="title is-4">Cost cu TVA (24%): {{totalCostWithVAT}} RON</h4>
               <div class="columns">
                 <div class="column">
-                  <button class="button is-info">Obtine ordin de plata</button>
+                    <button class="button is-info">Obtine ordin de plata</button>
                 </div>
                 <div class="column">
                   <button @click="saveFormData()" class="button is-info">Inregistreaza informatiile</button>
@@ -80,6 +80,9 @@
             <div v-if="modal_shouldDisplaySubscriptionEvent" class="modal-message">
               <div v-if="modal_shouldDisplaySucces">
                 <h4 class="title is-4">Date inregistrate cu success</h4>
+                <a :href="dataToDownload" download="info.xml">
+                  <button class="button cost-button is-info">Descarca XML</button>
+                </a>
               </div>
               <div v-if="modal_shouldDisplayError">
                 <h4 class="title is-4">Hopa! Datele nu s-au putut incarca pe server</h4>
@@ -101,7 +104,7 @@ import formModel from "../form-model";
 export default {
   name: "Form",
   components: {
-    ErrorLabel
+    ErrorLabel,
   },
   firestore() {
     return {
@@ -122,7 +125,8 @@ export default {
       modal_shouldDisplaySubscriptionEvent: false,
       modal_shouldDisplaySucces: false,
       modal_shouldDisplayError: false,
-      inputs: formModel
+      inputs: formModel,
+      dataToDownload: "nimic"
     };
   },
   computed: {
@@ -249,7 +253,8 @@ export default {
       }
 
       console.log("Saving data:");
-      console.log(dataToSave);
+      console.log();
+      this.dataToDownload = "data:text/xml;charset=utf-8," + encodeURIComponent(JSON.stringify(this.OBJtoXML(dataToSave)))
       collection.add(dataToSave).then(
         () => {
           this.modal_shouldDisplaySubscriptionEvent = true;
@@ -277,7 +282,40 @@ export default {
         element.value = "0"
         element.hasError = false
       })
+    },
+
+    OBJtoXML(obj) {
+    var xml = '';
+    for (var prop in obj) {
+        xml += "<" + prop + ">";
+        if(Array.isArray(obj[prop])) {
+            for (var array of obj[prop]) {
+
+                // A real botch fix here
+                xml += "</" + prop + ">";
+                xml += "<" + prop + ">";
+
+                xml += this.OBJtoXML(new Object(array));
+            }
+        } else if (typeof obj[prop] == "object") {
+            xml += this.OBJtoXML(new Object(obj[prop]));
+        } else {
+            xml += obj[prop];
+        }
+        xml += "</" + prop + ">";
     }
+    var ret = xml.replace(/<\/?[0-9]{1,}>/g,'');
+    return ret
+},
+ downloadObjectAsJson(exportObj, exportName){
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
   }
 };
 </script>

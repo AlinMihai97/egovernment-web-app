@@ -7,25 +7,60 @@
           <p>{{ formDescription }}</p>
         </div>
       </div>
-      <Form/>
+      <div class="columns">
+        <div class="column is-6 center-text-global">
+          <router-link to="/">
+            <button class="button" :class="{'is-success': isFormSelected}" @click="pageChanged('form')">Formular de inscriere</button>
+          </router-link>
+        </div>
+        <div class="column is-6 center-text-global">
+           <router-link to="/report">
+            <button class="button" :class="{'is-success': isReportSelected}" @click="pageChanged('report')">Statistici parcare</button>
+          </router-link>
+        </div>
+      </div>
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
-import Form from './components/Form.vue'
+/* eslint-disable no-console */
 import TextContent from './content-config'
-
 export default {
   name: 'app',
   components: {
-    Form
   },
   data: function() {
     return {
       formTitle : TextContent().formTitle,
-      formDescription : TextContent().formDescription
+      formDescription : TextContent().formDescription,
+      isFormSelected: true,
+      isReportSelected: false
     }
+  },
+  methods: {
+    currentRoute: function() {
+      if (this.$route.fullPath != "/") {
+        return "reporting"
+      } else {
+        return "form"
+      }
+    },
+
+    pageChanged: function(page) {
+      let currentPage = page != undefined ? page : this.currentRoute()
+      if (currentPage == "form") {
+        this.isFormSelected = true
+        this.isReportSelected = false
+      } else {
+        this.isFormSelected = false
+        this.isReportSelected = true
+      }
+    }
+  },
+  mounted: function() {
+    this.pageChanged()
   }
 }
 </script>
@@ -42,6 +77,10 @@ export default {
 }
 
 #form-title {
+  text-align: center;
+}
+
+.center-text-global {
   text-align: center;
 }
 </style>
